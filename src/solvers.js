@@ -89,8 +89,8 @@ window.countNRooksSolutions = function(n) {
   // if (n === 2) {  
   //   debugger;
   // }
-  var innerRecursive = function(currentBoard) {
-    if (history[JSON.stringify(currentBoard.rows())] !== undefined) {
+  var innerRecursive = function() {
+    if (history[JSON.stringify(board.rows())] !== undefined) {
       return;
     }
 
@@ -107,7 +107,7 @@ window.countNRooksSolutions = function(n) {
           board.togglePiece(row, column);
           if (board.hasAnyRowConflicts() === false && board.hasAnyColConflicts() === false) {
             rooksOnBoard++;
-            innerRecursive(board);
+            innerRecursive();
             rooksOnBoard--;
           }
           
@@ -117,7 +117,7 @@ window.countNRooksSolutions = function(n) {
       }
     }
   };
-  innerRecursive(board);
+  innerRecursive();
 
   // solutionCount = Object.keys(history).length;
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
