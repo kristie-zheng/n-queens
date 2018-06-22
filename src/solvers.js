@@ -88,7 +88,7 @@ window.countNRooksSolutions = function(n) {
   var rooksOnBoard = 0;
   var board = new Board({'n': n});
   var totalObj = {};
-  if (n === 1) {  
+  if (n === 2) {  
     debugger;
   }
   var innerRecursive = function(currentBoard) {
@@ -98,10 +98,12 @@ window.countNRooksSolutions = function(n) {
       for (var row = 0; row < n; row++) {
         // console.log('')
         for (var column = 0; column < n; column++) {
-          if (board.get(row)[column] !== 1) {
+          if (board.get(row)[column] !== 1 && board.get(row).includes(1) === false) {
             board.togglePiece(row, column);
-            if (board.hasAnyRowConflicts() === false && board.hasAnyColConflicts() === false) {
+            if (board.hasColConflictAt(column) === false) {
               rooksOnBoard++;
+              // row ++
+              // column += 1;
               innerRecursive(board);
               rooksOnBoard--;
               board.togglePiece(row, column);
@@ -122,7 +124,7 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  // var rooksOnBoard = 0;
+  // var queensOnBoard = 0;
 
   // var board = new Board({'n': n});
   // // console.log('board instantiated', board)
