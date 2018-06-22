@@ -22,7 +22,7 @@ window.findNRooksSolution = function(n) {
   // console.log('board instantiated', board)
   if (n === 0) {
     //return board.rows(); 
-    return board;
+    return [];
   }
   var innerRecursive = function(currentBoard) {
     if (rooksOnBoard === n) {
@@ -81,91 +81,48 @@ if array()
 
 */
 
-
-// return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
-// window.countNRooksSolutions = function(n) {
-//   var solutionCount = 0; //fixme
-//   var rooksOnBoard = 0;
-//   var board = new Board({'n': n});
-//   var totalObj = {};
-//   var column = 0;
-//   if (n === 2) {  
-//     debugger;
-//   }
-//   var innerRecursive = function(currentBoard) {
-//     if (rooksOnBoard === n) {
-//       totalObj[JSON.stringify(board.rows())] = 1;
-//     } else {
-//       for (var row = 0; row < n; row++) {
-//         // for (var column = 0; column < n; column++) {
-//         while (column < n) {
-//           column = column === n - 1 ? 0 : column;
-//           if (board.get(row)[column] !== 1 && board.get(row).includes(1) === false) {
-//             board.togglePiece(row, column);
-//             if (board.hasColConflictAt(column) === false) {
-//               rooksOnBoard++;
-//               // row ++
-//               // column += 1;
-//               column ++; //this changes column, which affects the piece that is removed in the toggle line 112
-//               innerRecursive(board);
-//               rooksOnBoard--;
-//               board.togglePiece(row, column); //since this is done in both the if and else, bring it outside
-//             } else {
-//               board.togglePiece(row, column);
-//             }
-//           }
-//         } 
-//         column = 0;
-//       }
-//     }
-//   };
-//   innerRecursive(board);
-
-//   solutionCount = Object.keys(totalObj).length;
-//   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-//   return solutionCount;
-// };
-
 window.countNRooksSolutions = function(n) {
-  // var solutionCount = 0; //fixme
-  // var rooksOnBoard = 0;
-  // var board = new Board({'n': n});
-  // // var totalObj = {};
-  // // if (n === 2) {  
-  // //   debugger;
-  // // }
-  // var innerRecursive = function(currentBoard) {
-  //   if (rooksOnBoard === n) {
-  //     // totalObj[JSON.stringify(board.rows())] = 1;
-  //     solutionCount ++;
-  //   }
-  //    else {
-  //     for (var row = 0; row < n; row++) {
-  //       // console.log('')
-  //       for (var column = 0; column < n; column++) {
-  //         if (board.get(row)[column] !== 1) {
-  //           board.togglePiece(row, column);
-  //           if (board.hasAnyRowConflicts() === false && board.hasAnyColConflicts() === false) {
-  //             rooksOnBoard++;
-  //             innerRecursive(board);
-  //             rooksOnBoard--;
-  //             board.togglePiece(row, column);
-  //               //if(row)
-  //           /*}*/ } else {
-  //             board.togglePiece(row, column);
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // };
-  // innerRecursive(board);
+  var solutionCount = 0; //fixme
+  var rooksOnBoard = 0;
+  var board = new Board({'n': n});
+  var history = {};
+  // if (n === 2) {  
+  //   debugger;
+  // }
+  var innerRecursive = function(currentBoard) {
+    if (history[JSON.stringify(currentBoard.rows())] !== undefined) {
+      return;
+    }
 
-  // // solutionCount = Object.keys(totalObj).length;
-  // console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  // return solutionCount;
+    if (rooksOnBoard === n) {
+      solutionCount++;
+      history[JSON.stringify(board.rows())] = 1;
+      return;
+    }
+
+    for (var row = 0; row < n; row++) {
+      // console.log('')
+      for (var column = 0; column < n; column++) {
+        if (board.get(row)[column] !== 1) {
+          board.togglePiece(row, column);
+          if (board.hasAnyRowConflicts() === false && board.hasAnyColConflicts() === false) {
+            rooksOnBoard++;
+            innerRecursive(board);
+            rooksOnBoard--;
+          }
+          
+          history[JSON.stringify(board.rows())] = 1;
+          board.togglePiece(row, column);
+        }
+      }
+    }
+  };
+  innerRecursive(board);
+
+  // solutionCount = Object.keys(history).length;
+  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  return solutionCount;
 };
-
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
