@@ -126,60 +126,48 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var queensOnBoard = 0;
   var board = new Board({'n': n});
-  // console.log('board instantiated', board)
-  if (n === 0) {
-    //return board.rows(); 
-    return board.rows();
+  if (n === 0 || n === 2 || n === 3) {
+    return null;
+  } else if (n === 1) {
+    return [[1]];
   }
-  var innerRecursive = function(currentBoard) {
-    if (queensOnBoard === n) {
-      var hasEmptyRow = false;
-      for (var i = 0; i < n; i++) {
-        if (board.row(1).contains(1) === false) {
-          hasEmptyRow = true;
-        }
-        if (hasEmptyRow === false) {
-          console.log('here is the oslution to be passed frmo IR', board.rows());
-          return board.rows();
-        } else {
-          return;
-        }
-      }
-      // return board.rows(); 
-      console.log('executes here for board size of ', n);
-    } else {
-      for (var row = 0; row < n; row++) {
-        for (var column = 0; column < n; column++) {
-          if (board.get(row)[column] !== 1 && board.get(row).includes(1) === false ) {
-            board.togglePiece(row, column);
-            // console.log('currentboard', board)
-            queensOnBoard++;
-            if (board.hasAnyRowConflicts() === false && board.hasAnyColConflicts() === false && board.hasAnyMajorDiagonalConflicts() === false && board.hasAnyMinorDiagonalConflicts() === false) {
-              return innerRecursive(board);
-            } else {
-              board.togglePiece(row, column);
-              queensOnBoard--;
-            }
-          }
+  var checkFuturePlacements = function(board, colToStart) {
+    var result;
+    if (colToStart >= n) {
+      return board.rows();
+    }
+    for (var row = 0; row < n; row++) {
+      board.togglePiece(row, colToStart);
+      if (anyConflicts(board) === false) {
+        result = checkFuturePlacements(board, colToStart + 1);
+        if (result !== undefined) {
+          return result;
         }
       }
-      //after it exits both for loops (aka when all the spots have been exhausted)
-      //if we kmnow the number of pieces is incorrect, just return
-      if (queensOnBoard !== n) {
-        return;
-      }
+      board.togglePiece(row, colToStart);
     }
   };
-  var solution = innerRecursive(board);
-  //var solution = board.rows(); //fixme
-  console.log('this is the solution', solution, 'if n is ', n);
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  if (solution !== undefined) {
+  var anyConflicts = function(board) {
+    var hasConflict = false;
+    if (board.hasAnyColConflicts() === true || board.hasAnyRowConflicts() === true || board.hasAnyMinorDiagonalConflicts() === true || board.hasAnyMajorDiagonalConflicts() === true) {
+      hasConflict = true;
+    }
+    return hasConflict;
+  };
 
-    return solution;
+  for (var i = 0; i < n; i++) {
+    board.togglePiece(i, 0);
+    var result = checkFuturePlacements(board, 1);
+    if (result !== undefined) {
+      return result;
+    } else {
+      board.togglePiece(i, 0);
+    }
+    
+
   }
+
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
